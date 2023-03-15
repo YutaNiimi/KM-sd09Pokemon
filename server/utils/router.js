@@ -59,7 +59,6 @@ router.post("/trainer/:trainerName", async (req, res, next) => {
 // TODO: トレーナーを削除する API エンドポイントの実装
 router.delete("/trainer/:trainerName", async (req, res, next) => {
   try {
-    alert("api");
     const { trainerName } = req.params;
     const result = await deleteTrainer(trainerName);
      // TODO: トレーナーが存在していなければ404を返す
