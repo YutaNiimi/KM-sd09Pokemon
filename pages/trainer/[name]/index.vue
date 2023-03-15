@@ -11,13 +11,12 @@ const onSubmit = async () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: $route.params.name,
+      name: trainerName,
     }),
   });
-  alert("okk");
-
 
   if (!response.ok) return;
+  router.push(`/`);
 };
 
 
