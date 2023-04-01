@@ -40,7 +40,16 @@ router.post("/trainer", async (req, res, next) => {
 });
 
 /** トレーナーの取得 */
-// TODO: トレーナーを取得する API エンドポイントの実装
+export const findTrainer = async (name) => {
+  const object = await s3Client.send(
+    new GetObjectCommand({
+      Bucket: config.bucketName,
+      Key: `${name}.json`,
+    })
+  );
+  const trainer = JSON.parse(await streamToString(object.Body));
+  return trainer;
+};
 
 /** トレーナーの更新 */
 router.post("/trainer/:trainerName", async (req, res, next) => {
