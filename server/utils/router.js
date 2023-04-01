@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteTrainer, findTrainers, upsertTrainer } from "~/server/utils/trainer";
+import { deleteTrainer, findTrainer, findTrainers, upsertTrainer } from "~/server/utils/trainer";
 import { findPokemon } from "~/server/utils/pokemon";
 
 const router = Router();
@@ -78,14 +78,27 @@ router.delete("/trainer/:trainerName", async (req, res, next) => {
 });
 
 /** ポケモンの追加 */
+/** ポケモンの追加 */
 router.put(
   "/trainer/:trainerName/pokemon/:pokemonName",
   async (req, res, next) => {
     try {
       const { trainerName, pokemonName } = req.params;
+      const trainer = await findTrainer(trainerName);
       const pokemon = await findPokemon(pokemonName);
-      // TODO: 削除系 API エンドポイントを利用しないかぎりポケモンは保持する
-      const result = await upsertTrainer(trainerName, { pokemons: [pokemon] });
+      const {
+        order,
+        name,
+        sprites: { front_default },
+      } = pokemon;
+      trainer.pokemons.push({
+        id: (trainer.pokemons[trainer.pokemons.length - 1]?.id ?? 0) + 1,
+        nickname: "",
+        order,
+        name,
+        sprites: { front_default },
+      });
+      const result = await upsertTrainer(trainerName, trainer);
       res.status(result["$metadata"].httpStatusCode).send(result);
     } catch (err) {
       next(err);
