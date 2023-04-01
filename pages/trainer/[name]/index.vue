@@ -33,7 +33,7 @@ const { dialog, onOpen, onClose } = useDialog();
     <button @click="onOpen(true)">マサラタウンにかえる</button>
 
     <h2>てもちポケモン</h2>
-    <button><span id="buttonImage"></span>ポケモンをつかまえる</button>
+    <CatchButton :to="`/trainer/${$route.params.name}/pokemon`">ポケモンをつかまえる</CatchButton>
 
     <GamifyDialog
       v-if="dialog"
