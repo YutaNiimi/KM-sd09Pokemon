@@ -48,7 +48,9 @@ const { dialog: releaseDialog, onOpen: onOpenRelease,onClose: onCloseRelease,} =
         <span style="font-size:25">{{ $route.params.name }}</span>
     </div>
     <button @click="onOpen(true)">マサラタウンにかえる</button>
-
+    <p></p>
+    <button type="button" onclick="history.back()" >戻る</button>
+    
     <h2>てもちポケモン</h2>
     <CatchButton :to="`/trainer/${$route.params.name}/pokemon`">ポケモンをつかまえる</CatchButton>
 
