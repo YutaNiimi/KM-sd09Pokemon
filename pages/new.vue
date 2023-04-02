@@ -45,6 +45,7 @@ const { dialog, onOpen, onClose } = useDialog();
         </GamifyItem>
       </GamifyList>
     </GamifyDialog>
+    <button type="button" onclick="history.back()" >戻る</button>
   </div>
 </template>
 
