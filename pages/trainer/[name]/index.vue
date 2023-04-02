@@ -4,6 +4,11 @@ const config = useRuntimeConfig();
 const route = useRoute()
 const trainerName = route.params.name;
 
+const { data: trainer, refresh } = await useFetch(
+  () => 
+  `${config.backendOrigin}/api/trainer/${trainerName}`
+);
+
 const onSubmit = async () => {
     const response =    await fetch(`${config.backendOrigin}/api/trainer/${trainerName}`, {
     method: "DELETE",
@@ -19,8 +24,20 @@ const onSubmit = async () => {
   router.push(`/`);
 };
 
+const onRelease = async (pokemonId) => {
+  const response = await fetch(
+    `${config.backendOrigin}/api/trainer/${route.params.name}/pokemon/${pokemonId}`,
+    {
+      method: "DELETE",
+    }
+  );
+  if (!response.ok) return;
+  await refresh();
+  onCloseRelease();
+};
 
 const { dialog, onOpen, onClose } = useDialog();
+const { dialog: releaseDialog, onOpen: onOpenRelease,onClose: onCloseRelease,} = useDialog();
 </script>
 
 <template>
@@ -34,6 +51,17 @@ const { dialog, onOpen, onClose } = useDialog();
 
     <h2>てもちポケモン</h2>
     <CatchButton :to="`/trainer/${$route.params.name}/pokemon`">ポケモンをつかまえる</CatchButton>
+
+    <div style="padding: 10px; margin-bottom: 10px;width:500px ; border: 5px solid #333333; border-radius: 5px;">
+      <GamifyItem v-for="pokemon in trainer.pokemons" :key="pokemon.id">
+        <img :src="pokemon.sprites.front_default" />
+        <span class="pokemon-name">{{ pokemon.nickname || pokemon.name }}</span>
+        <GamifyButton @click="onOpenNickname(pokemon)"
+          >ニックネームをつける</GamifyButton>
+        <GamifyButton @click="onOpenRelease(pokemon)"
+          >はかせにおくる</GamifyButton>
+      </GamifyItem>
+    </div>
 
     <GamifyDialog
       v-if="dialog"
@@ -50,7 +78,24 @@ const { dialog, onOpen, onClose } = useDialog();
         </GamifyItem>
       </GamifyList>
     </GamifyDialog>
-
+    <GamifyDialog
+      v-if="releaseDialog"
+      id="confirm-release"
+      title="かくにん"
+      :description="`ほんとうに ${
+        releaseDialog.nickname || releaseDialog.name
+      } を はかせに おくるんだな！ この そうさは とりけせないぞ！`"
+      @close="onCloseRelease"
+    >
+      <GamifyList :border="false" direction="horizon">
+        <GamifyItem>
+          <GamifyButton @click="onCloseRelease">いいえ</GamifyButton>
+        </GamifyItem>
+        <GamifyItem>
+          <GamifyButton @click="onRelease(releaseDialog.id)">はい</GamifyButton>
+        </GamifyItem>
+      </GamifyList>
+    </GamifyDialog>
 </div>
 </template>
 
